@@ -16,7 +16,7 @@ public class Avaliacao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    // Preenchido pelo servidor a partir do usuario autenticado (token JWT)
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
@@ -52,7 +52,7 @@ public class Avaliacao {
     private String comentario;
     private String foto;
 
-    @NotNull
+    // Registrados automaticamente pelo servidor no momento da avaliacao
     @Column(name = "data_avaliacao")
     private LocalDate dataAvaliacao;
 

@@ -26,11 +26,11 @@ public class BanheiroResource {
     private ApplicationEventPublisher publisher;
 
     @GetMapping
-    public List<Banheiro> listar(@RequestParam(required = false) Long localizacaoId) {
-        if (localizacaoId != null) {
-            return banheiroRepository.findByLocalizacaoId(localizacaoId);
-        }
-        return banheiroRepository.findAll();
+    public List<Banheiro> listar(@RequestParam(required = false) Long localizacaoId,
+                                 @RequestParam(required = false) Long campusId,
+                                 @RequestParam(required = false) Banheiro.BanheiroTipo tipo,
+                                 @RequestParam(required = false) Boolean acessivel) {
+        return banheiroRepository.pesquisar(localizacaoId, campusId, tipo, acessivel);
     }
 
     @GetMapping("/{id}")

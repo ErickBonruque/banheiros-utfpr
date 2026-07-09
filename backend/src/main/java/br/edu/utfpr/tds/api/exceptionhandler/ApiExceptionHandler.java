@@ -1,6 +1,6 @@
 package br.edu.utfpr.tds.api.exceptionhandler;
 
-import br.edu.utfpr.tds.api.service.BanheiroInativoException;
+import br.edu.utfpr.tds.api.service.RegraNegocioException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
@@ -61,9 +61,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Problema(erros));
     }
 
-    @ExceptionHandler(BanheiroInativoException.class)
-    public ResponseEntity<Object> handleBanheiroInativo(BanheiroInativoException ex) {
-        List<Problema.Erro> erros = List.of(new Problema.Erro("banheiro", ex.getMessage()));
+    @ExceptionHandler(RegraNegocioException.class)
+    public ResponseEntity<Object> handleRegraNegocio(RegraNegocioException ex) {
+        List<Problema.Erro> erros = List.of(new Problema.Erro("regra", ex.getMessage()));
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new Problema(erros));
     }
 }

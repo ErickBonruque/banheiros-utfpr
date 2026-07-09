@@ -48,6 +48,28 @@ public class Banheiro {
         M, F, UNISSEX, PCD
     }
 
+    public enum Selo {
+        TRONO_DE_OURO, ZONA_DE_RISCO
+    }
+
+    /**
+     * Selo calculado a partir da nota media (regras de negocio):
+     * media >= 4.5 -> Trono de Ouro | media < 2.0 -> Zona de Risco.
+     */
+    @Transient
+    public Selo getSelo() {
+        if (totalAvaliacoes == null || totalAvaliacoes == 0 || notaMedia == null) {
+            return null;
+        }
+        if (notaMedia >= 4.5) {
+            return Selo.TRONO_DE_OURO;
+        }
+        if (notaMedia < 2.0) {
+            return Selo.ZONA_DE_RISCO;
+        }
+        return null;
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

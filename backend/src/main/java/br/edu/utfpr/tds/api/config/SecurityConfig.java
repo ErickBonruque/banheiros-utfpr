@@ -64,7 +64,10 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.POST, "/usuarios").permitAll()
                 // Leitura publica (navegacao no app)
                 .antMatchers(HttpMethod.GET,
-                        "/campus/**", "/localizacoes/**", "/banheiros/**", "/avaliacoes/**").permitAll()
+                        "/campus/**", "/localizacoes/**", "/banheiros/**", "/avaliacoes/**",
+                        "/comentarios/**", "/insights/**").permitAll()
+                // Geracao manual de insights: somente ADMIN
+                .antMatchers(HttpMethod.POST, "/insights/gerar").hasRole("ADMIN")
                 // Estrutura (campus, localizacoes, banheiros): somente ADMIN escreve
                 .antMatchers(HttpMethod.POST, "/campus/**", "/localizacoes/**", "/banheiros/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.PUT, "/campus/**", "/localizacoes/**", "/banheiros/**").hasRole("ADMIN")
@@ -72,9 +75,11 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.DELETE, "/campus/**", "/localizacoes/**", "/banheiros/**").hasRole("ADMIN")
                 // Gestao de usuarios (exceto cadastro publico): somente ADMIN
                 .antMatchers("/usuarios/**").hasRole("ADMIN")
-                // Avaliacoes: qualquer usuario autenticado cria; remover so ADMIN
-                .antMatchers(HttpMethod.POST, "/avaliacoes").authenticated()
-                .antMatchers(HttpMethod.DELETE, "/avaliacoes/**").hasRole("ADMIN")
+                // Avaliacoes e comentarios: qualquer usuario autenticado cria; remover so ADMIN
+                .antMatchers(HttpMethod.POST, "/avaliacoes", "/comentarios").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/avaliacoes/**", "/comentarios/**").hasRole("ADMIN")
+                // Perfil do usuario logado
+                .antMatchers("/perfil/**").authenticated()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

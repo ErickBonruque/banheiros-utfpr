@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -43,8 +44,10 @@ public class AvaliacaoResource {
     }
 
     @PostMapping
-    public ResponseEntity<Avaliacao> criar(@Valid @RequestBody Avaliacao avaliacao, HttpServletResponse response) {
-        Avaliacao salva = avaliacaoService.salvar(avaliacao);
+    public ResponseEntity<Avaliacao> criar(@Valid @RequestBody Avaliacao avaliacao,
+                                           Authentication authentication,
+                                           HttpServletResponse response) {
+        Avaliacao salva = avaliacaoService.salvar(avaliacao, authentication.getName());
         publisher.publishEvent(new RecursoCriadoEvent(this, response, salva.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(salva);
     }

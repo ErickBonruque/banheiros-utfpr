@@ -17,8 +17,8 @@ O **BanheiroUTFPR** é um sistema web colaborativo e inteligente desenvolvido pa
 
 O projeto é composto por dois módulos:
 
-- **API RESTful** desenvolvida com **Node.js** e **Express**, responsável pela lógica de negócio, persistência dos dados em **MongoDB** e processamento de inteligência.
-- **Aplicação frontend** em **React**, que proporciona uma interface moderna, responsiva e intuitiva.
+- **API RESTful** desenvolvida com **Java** e **Spring Boot**, responsável pela lógica de negócio, persistência dos dados em **MySQL** (com versionamento de schema via **Flyway**) e processamento de inteligência.
+- **Aplicação frontend** em **Angular**, que proporciona uma interface moderna, responsiva e intuitiva.
 
 Um diferencial do sistema é a **modelagem flexível de localização**: nem todo banheiro de um câmpus universitário está dentro de um prédio com andares definidos. O BanheiroUTFPR suporta banheiros em áreas externas, containers provisórios, ginásios, bibliotecas e qualquer outro tipo de local, tornando-o utilizável em qualquer câmpus da UTFPR.
 
@@ -52,7 +52,7 @@ Criar uma plataforma funcional e inteligente que incentive a melhoria das instal
 - Somente administradores podem cadastrar, editar e remover banheiros, localizações e câmpus
 - Banheiros com nota média abaixo de **2.0** recebem alerta visual de **"Zona de Risco"**
 - Banheiros com nota média acima de **4.5** recebem medalha de **"Trono de Ouro"**
-- Insights são gerados periodicamente via job agendado (**node-cron**)
+- Insights são gerados periodicamente via job agendado (**Spring `@Scheduled`**), com geração manual disponível para o administrador
 
 ---
 
@@ -178,33 +178,40 @@ A API RESTful segue o padrão de arquitetura REST com as seguintes rotas organiz
 
 | Método | Rota | Descrição | Acesso |
 |--------|------|-----------|--------|
-| POST | `/api/auth/register` | Registro de novo usuário | Público |
-| POST | `/api/auth/login` | Login e geração de token JWT | Público |
-| GET | `/api/campus` | Listar todos os câmpus | Público |
-| POST | `/api/campus` | Cadastrar novo câmpus | Admin |
-| GET | `/api/localizacoes` | Listar localizações (filtro por campus) | Público |
-| POST | `/api/localizacoes` | Cadastrar nova localização | Admin |
-| GET | `/api/banheiros` | Listar banheiros (filtros diversos) | Público |
-| GET | `/api/banheiros/:id` | Detalhes de um banheiro | Público |
-| POST | `/api/banheiros` | Cadastrar novo banheiro | Admin |
-| PUT | `/api/banheiros/:id` | Editar banheiro existente | Admin |
-| DELETE | `/api/banheiros/:id` | Remover banheiro | Admin |
-| GET | `/api/banheiros/:id/avaliacoes` | Listar avaliações de um banheiro | Público |
-| POST | `/api/banheiros/:id/avaliacoes` | Criar avaliação | Autenticado |
-| GET | `/api/ranking` | Ranking geral dos banheiros | Público |
-| GET | `/api/insights/:banheiroId` | Insights inteligentes de um banheiro | Público |
-| GET | `/api/insights/:id/horarios` | Análise de movimentação por horário | Público |
-| GET | `/api/insights/campus/:campusId` | Panorama geral do câmpus | Público |
-| GET | `/api/perfil` | Ver perfil do usuário logado | Autenticado |
-| PUT | `/api/perfil` | Editar perfil | Autenticado |
-| GET | `/api/perfil/avaliacoes` | Histórico de avaliações | Autenticado |
+| POST | `/usuarios` | Registro de novo usuário | Público |
+| POST | `/oauth/token` | Login e geração do token JWT (+ refresh em cookie) | Público |
+| POST | `/oauth/token/refresh` | Renovação do access token | Público |
+| DELETE | `/oauth/token` | Logout (remove o refresh token) | Público |
+| GET | `/campus` | Listar todos os câmpus | Público |
+| POST/PUT/DELETE | `/campus` | Gestão de câmpus | Admin |
+| GET | `/localizacoes?campusId=` | Listar localizações (filtro por câmpus) | Público |
+| POST/PUT/DELETE | `/localizacoes` | Gestão de localizações | Admin |
+| GET | `/banheiros` | Listar banheiros (filtros: câmpus, localização, tipo, acessível) | Público |
+| GET | `/banheiros/{id}` | Detalhes de um banheiro (com selo) | Público |
+| GET | `/banheiros/ranking` | Ranking geral dos banheiros | Público |
+| POST/PUT/DELETE | `/banheiros` | Gestão de banheiros | Admin |
+| PATCH | `/banheiros/{id}/ativo` | Ativar/desativar banheiro | Admin |
+| GET | `/avaliacoes?banheiroId=&page=` | Pesquisar avaliações (filtros + paginação) | Público |
+| POST | `/avaliacoes` | Criar avaliação (usuário vem do token) | Autenticado |
+| DELETE | `/avaliacoes/{id}` | Remover avaliação | Admin |
+| GET | `/comentarios?banheiroId=` | Listar comentários de um banheiro | Público |
+| POST | `/comentarios` | Comentar um banheiro | Autenticado |
+| DELETE | `/comentarios/{id}` | Remover comentário | Admin |
+| GET | `/insights/banheiros/{id}` | Insights inteligentes de um banheiro | Público |
+| GET | `/insights/banheiros/{id}/horarios` | Análise de movimentação por horário | Público |
+| GET | `/insights/campus/{campusId}` | Panorama geral do câmpus | Público |
+| POST | `/insights/gerar` | Gerar insights sob demanda | Admin |
+| GET | `/perfil` | Ver perfil do usuário logado | Autenticado |
+| PUT | `/perfil` | Editar perfil | Autenticado |
+| GET | `/perfil/avaliacoes` | Histórico de avaliações (paginado) | Autenticado |
+| GET/PUT/PATCH/DELETE | `/usuarios/**` | Gestão de usuários | Admin |
 
 ---
 
 ## Stack Tecnológica (Resumo)
 
-- **Backend:** Node.js + Express
-- **Banco de dados:** MongoDB
-- **Frontend:** React
-- **Autenticação:** JWT
-- **Jobs agendados:** node-cron
+- **Backend:** Java + Spring Boot (Web, Data JPA, Validation, Security)
+- **Banco de dados:** MySQL 8, versionado com Flyway
+- **Frontend:** Angular 18
+- **Autenticação:** JWT (access token + refresh token em cookie HttpOnly)
+- **Jobs agendados:** Spring `@Scheduled` (geração periódica de insights)

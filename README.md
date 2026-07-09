@@ -1,172 +1,139 @@
-# Checkpoint 1 - API Java + MySQL
+# 🚻 BanheiroUTFPR
 
-Estrutura inicial de uma API com Spring Boot, Java 8 e conexao com MySQL.
+Sistema inteligente e colaborativo de **avaliação de banheiros do campus** da UTFPR.
+Projeto final da disciplina de Análise e Desenvolvimento de Software — UTFPR Câmpus Santa Helena.
 
-## Requisitos
+**Aluno:** Erick Bonruque · **RA:** 2587246 · **Ano:** 2026
 
-- Java 8
-- Maven
-- MySQL em execucao
+## Descrição do sistema
 
-## Principais Dependencias
+O BanheiroUTFPR permite que alunos avaliem e consultem a qualidade dos banheiros dos câmpus da UTFPR.
+Usuários cadastrados atribuem notas em **7 critérios** (limpeza, cheiro, papel higiênico, estado das
+portas, iluminação, silêncio e movimentação), deixam comentários, acompanham o **ranking** e consultam
+**insights inteligentes** gerados a partir dos dados coletados.
 
-- spring-boot-starter-web
-- spring-boot-starter-data-jpa
-- spring-boot-devtools
-- mysql-connector-java
+Principais funcionalidades:
 
-## Banco de Dados
+- Cadastro e autenticação de usuários com **JWT** (login, registro, refresh token e logout)
+- Hierarquia flexível **Câmpus → Localização → Banheiro** (suporta prédios, blocos, áreas externas, containers etc.)
+- Avaliação com 7 critérios (1 a 5 estrelas) com data e horário registrados automaticamente
+- Regra de negócio: **cada usuário avalia o mesmo banheiro no máximo 1 vez por dia** (HTTP 422)
+- Regra de negócio: banheiro **inativo não pode ser avaliado** (HTTP 422)
+- Nota média do banheiro recalculada automaticamente a cada avaliação
+- Selos automáticos: **🏆 Trono de Ouro** (média ≥ 4.5) e **⚠️ Zona de Risco** (média < 2.0)
+- Comentários por banheiro (fórum de dicas)
+- Ranking geral dos banheiros e filtros por câmpus, localização, tipo e acessibilidade
+- **Módulo de inteligência** (job agendado via Spring `@Scheduled` + geração manual pelo admin):
+  - Melhor horário para uso (análise de silêncio/movimentação por faixa de horário)
+  - Horário de pico de movimento
+  - Tendência de qualidade (melhorando / piorando / estável)
+  - Alertas e destaques automáticos (Zona de Risco / Trono de Ouro)
+  - Panorama geral do câmpus (totais, média geral, melhor e pior banheiro)
+- Painel administrativo (CRUD de câmpus, localizações e banheiros) restrito ao perfil ADMIN
+- Perfil do usuário com histórico de avaliações e troca de senha
 
-Configurado em src/main/resources/application.properties:
+## Tecnologias utilizadas
 
-- URL: jdbc:mysql://localhost:3306/tds_api?createDatabaseIfNotExist=true&serverTimezone=UTC
-- Usuario: root
-- Senha: em branco
+**Backend (`backend/`)**
+- Java 8+ · Spring Boot 2.7 (Web, Data JPA, Validation, Security)
+- MySQL 8 · Hibernate (`ddl-auto=validate`)
+- **Flyway** — versionamento do banco de dados (`backend/src/main/resources/db/migration`)
+- JWT (jjwt) — autenticação stateless com access token + refresh token em cookie HttpOnly
+- BCrypt — hash de senhas
+- Spring `@Scheduled` — job agendado de geração de insights
 
-## Como Rodar
+**Frontend (`frontend/`)**
+- Angular 18 (componentes standalone, rotas com guards, interceptor HTTP, serviços, signals)
+- TypeScript · CSS puro
 
-No terminal, na raiz do projeto:
+**Apoio**
+- Docker Compose (MySQL) · Insomnia (coleção de testes em `api-tests/`)
+
+## Estrutura do repositório
+
+```
+banheiros-utfpr/
+├── backend/      API REST Spring Boot
+│   └── src/main/resources/db/migration/   scripts Flyway (V1 schema, V2 dados)
+├── frontend/     Aplicação Angular
+├── api-tests/    Coleção Insomnia com todos os endpoints
+├── docs/         Descritivo do projeto, arquitetura e roteiro dos vídeos
+└── docker-compose.yml   MySQL 8 para desenvolvimento
+```
+
+## Como executar o projeto
+
+Pré-requisitos: **Java 8+**, **Maven**, **Node 18+** e **Docker** (ou um MySQL 8 local).
+
+### 1. Banco de dados (MySQL)
 
 ```bash
+docker compose up -d
+```
+
+Sobe um MySQL 8 em `localhost:3306` com o banco `banheiro_utfpr` (usuário `root`, senha em branco).
+Se preferir usar um MySQL próprio, ajuste `backend/src/main/resources/application.properties`.
+
+> **Versionamento do banco:** na primeira execução da API o **Flyway** cria todas as tabelas (`V1`)
+> e insere os dados iniciais (`V2`) automaticamente. Não é preciso rodar script manual.
+
+### 2. Backend (API)
+
+```bash
+cd backend
 mvn spring-boot:run
 ```
 
-Ou execute a classe CheckpointApi01Application pela IDE.
+A API sobe em `http://localhost:8080`.
 
-## Status
-
-- Build validado com sucesso usando mvn test.
-
-# Checkpoint 2 - API Funcionalidades
-
-Implementacao das funcionalidades da API: recursos REST completos, validacoes,
-tratamento de erros, eventos, regras de negocio, filtros e paginacao.
-
-## Recursos (Endpoints)
-
-- /campus - CRUD de campus
-- /localizacoes - CRUD de localizacoes (filtro por campusId)
-- /banheiros - CRUD de banheiros (filtro por localizacaoId, ranking por nota)
-- /usuarios - CRUD de usuarios
-- /avaliacoes - cadastro, busca, pesquisa com filtros e paginacao
-
-## Funcionalidades Implementadas
-
-- Modelos, repositorios e recursos para todas as entidades.
-- Cadastro de recursos (POST) com retorno do header Location.
-- Atualizacao total (PUT) e remocao (DELETE) de recursos.
-- Atualizacao parcial (PATCH) do campo ativo em banheiros e usuarios.
-- Validacao de atributos desconhecidos no corpo da requisicao.
-- Tratamento centralizado de erros com RestControllerAdvice (classe Problema).
-- Validacao de valores invalidos com Bean Validation.
-- Tratamento de excecao para recurso nao encontrado (404).
-- Controle de eventos da aplicacao (RecursoCriadoEvent / RecursoCriadoListener).
-- Classe de Service para regras de negocio (AvaliacaoService).
-- Relacionamentos entre recursos (ManyToOne) e datas com LocalDate.
-- Regra de negocio: nao permite avaliar banheiro inativo (HTTP 422).
-- Filtro na pesquisa de avaliacoes (banheiro, campus, periodo de datas).
-- Paginacao na pesquisa de avaliacoes.
-
-## Principais Dependencias Adicionais
-
-- spring-boot-starter-validation
-
-## Configuracoes Adicionais
-
-Em src/main/resources/application.properties:
-
-- spring.jackson.deserialization.fail-on-unknown-properties=true
-- spring.jackson.serialization.write-dates-as-timestamps=false
-
-## Status
-
-- Build validado com sucesso usando mvn compile.
-
-# Checkpoint 3 - API Seguranca
-
-Implementacao da camada de seguranca da API com Spring Security e JWT
-(autenticacao stateless), controle de acesso por perfil de usuario, CORS,
-hash de senhas e logout.
-
-## Pontos da API que passaram a exigir seguranca
-
-Antes desta etapa todos os endpoints eram publicos. Os riscos corrigidos:
-
-- Endpoints de escrita (POST/PUT/PATCH/DELETE) estavam abertos a qualquer um.
-- Senha de usuario era gravada em texto puro.
-- O cadastro de usuario permitia definir role=ADMIN (escalonamento de privilegio).
-- Nao havia CORS, autenticacao, expiracao de sessao nem logout.
-
-## Funcionalidades Implementadas
-
-- Hash de senha com BCrypt (UsuarioService / DataLoader).
-- Autenticacao via OAuth2 Password Flow simplificado retornando JWT.
-- Access Token (curta duracao) e Refresh Token (longa duracao).
-- Refresh Token armazenado em cookie HttpOnly (nao acessivel via JavaScript).
-- Renovacao do Access Token a partir do Refresh Token enviado na requisicao.
-- Logout removendo o cookie do Refresh Token.
-- Usuarios carregados do banco de dados (UserDetailsService pelo e-mail).
-- Permissoes de acesso por role (ADMIN e USER).
-- Cadastro publico de usuario forca role USER (impede escalonamento).
-- CORS configurado para o front-end (origens via application.properties).
-- Troca do tipo de seguranca por Profile (JWT padrao ou HTTP Basic).
-
-## Endpoints de Autenticacao
-
-- POST   /oauth/token          - login (email + senha); retorna access token e seta refresh cookie
-- POST   /oauth/token/refresh  - gera novo access token a partir do refresh cookie
-- DELETE /oauth/token          - logout (remove o refresh cookie)
-
-## Regras de Acesso
-
-- Publico: POST /usuarios (cadastro) e GET de campus, localizacoes, banheiros e avaliacoes.
-- Autenticado (USER ou ADMIN): POST /avaliacoes.
-- Somente ADMIN: escrita em campus, localizacoes, banheiros; gestao de usuarios;
-  remocao de avaliacoes.
-
-## Principais Dependencias Adicionais
-
-- spring-boot-starter-security
-- io.jsonwebtoken: jjwt-api, jjwt-impl, jjwt-jackson (0.11.5)
-
-## Configuracoes Adicionais
-
-Em src/main/resources/application.properties:
-
-- banheiros.jwt.secret (use a variavel de ambiente JWT_SECRET em producao)
-- banheiros.jwt.access-token-expiration (segundos)
-- banheiros.jwt.refresh-token-expiration (segundos)
-- banheiros.cors.allowed-origins
-- banheiros.admin.email / banheiros.admin.senha (admin inicial)
-
-## Usuario Admin Inicial
-
-Criado automaticamente se a tabela de usuarios estiver vazia:
-
-- E-mail: admin@utfpr.edu.br
-- Senha: admin123
-
-## Perfil de Seguranca Alternativo (Basic Auth)
-
-Para rodar com HTTP Basic em vez de JWT:
+### 3. Frontend
 
 ```bash
-mvn spring-boot:run -Dspring-boot.run.profiles=basic-security
+cd frontend
+npm install
+npm start
 ```
 
-## Exemplo de Uso
+A aplicação sobe em `http://localhost:4200`.
 
-```bash
-# login
-curl -i -X POST http://localhost:8080/oauth/token \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@utfpr.edu.br","senha":"admin123"}'
+## Usuários iniciais
 
-# requisicao autenticada
-curl http://localhost:8080/usuarios \
-  -H "Authorization: Bearer <access_token>"
-```
+Criados pela migration `V2__dados_iniciais.sql`:
 
-## Status
+| Perfil | E-mail | Senha |
+|--------|--------|-------|
+| ADMIN | `admin@utfpr.edu.br` | `admin123` |
+| USER | `joao@alunos.utfpr.edu.br` | `user123` |
+| USER | `maria@alunos.utfpr.edu.br` | `user123` |
 
-- Build validado com sucesso usando mvn compile.
+## Autenticação
+
+A API usa **JWT (Bearer Token)** com fluxo de senha simplificado (OAuth2 Password Flow):
+
+- `POST /oauth/token` — login com `{"email": "...", "senha": "..."}`; retorna o **access token**
+  (30 min) no corpo e grava o **refresh token** (7 dias) em cookie **HttpOnly**
+- `POST /oauth/token/refresh` — renova o access token a partir do cookie
+- `DELETE /oauth/token` — logout (remove o cookie)
+
+Requisições autenticadas enviam o header `Authorization: Bearer <access_token>`.
+Perfis de acesso: **ADMIN** (gestão da estrutura e de usuários) e **USER** (avaliar e comentar).
+Leituras (GET) de câmpus, localizações, banheiros, avaliações, comentários e insights são públicas.
+
+Alternativa didática: rodando com o profile `basic-security`, a API troca o JWT por **HTTP Basic**
+(`mvn spring-boot:run -Dspring-boot.run.profiles=basic-security`).
+
+## Testes dos endpoints
+
+Importe `api-tests/Insomnia_BanheiroUTFPR.json` no Insomnia (Application → Import).
+A coleção cobre **todos os endpoints**, organizados por domínio, incluindo os cenários de erro
+(regra de 1 avaliação/dia, banheiro inativo, acesso negado).
+
+Após o *Login (admin)*, copie o `accessToken` da resposta para a variável de ambiente
+`access_token` da coleção — as demais requisições já usam Bearer automaticamente.
+
+## Documentação
+
+- [`docs/BanheiroUTFPR_Descritivo.md`](docs/BanheiroUTFPR_Descritivo.md) — descritivo do projeto (entidades, regras, rotas)
+- [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md) — arquitetura das aplicações e do banco
+- [`docs/ROTEIRO_VIDEOS.md`](docs/ROTEIRO_VIDEOS.md) — roteiro sugerido para os vídeos de apresentação
+- [`docs/CHECKPOINTS.md`](docs/CHECKPOINTS.md) — histórico dos checkpoints da disciplina

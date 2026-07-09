@@ -1,0 +1,810 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-07-09T12:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v9.3.0",
+  "resources": [
+    {
+      "_id": "wrk_banheiros",
+      "_type": "workspace",
+      "name": "BanheiroUTFPR API",
+      "description": "Colecao de testes de todos os endpoints da API BanheiroUTFPR",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_base",
+      "_type": "environment",
+      "parentId": "wrk_banheiros",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8080",
+        "access_token": "COLE_AQUI_O_ACCESS_TOKEN"
+      }
+    },
+    {
+      "_id": "fld_0",
+      "_type": "request_group",
+      "parentId": "wrk_banheiros",
+      "name": "1. Autenticação",
+      "metaSortKey": 0
+    },
+    {
+      "_id": "fld_1",
+      "_type": "request_group",
+      "parentId": "wrk_banheiros",
+      "name": "2. Usuários",
+      "metaSortKey": 1
+    },
+    {
+      "_id": "fld_2",
+      "_type": "request_group",
+      "parentId": "wrk_banheiros",
+      "name": "3. Câmpus",
+      "metaSortKey": 2
+    },
+    {
+      "_id": "fld_3",
+      "_type": "request_group",
+      "parentId": "wrk_banheiros",
+      "name": "4. Localizações",
+      "metaSortKey": 3
+    },
+    {
+      "_id": "fld_4",
+      "_type": "request_group",
+      "parentId": "wrk_banheiros",
+      "name": "5. Banheiros",
+      "metaSortKey": 4
+    },
+    {
+      "_id": "fld_5",
+      "_type": "request_group",
+      "parentId": "wrk_banheiros",
+      "name": "6. Avaliações",
+      "metaSortKey": 5
+    },
+    {
+      "_id": "fld_6",
+      "_type": "request_group",
+      "parentId": "wrk_banheiros",
+      "name": "7. Comentários",
+      "metaSortKey": 6
+    },
+    {
+      "_id": "fld_7",
+      "_type": "request_group",
+      "parentId": "wrk_banheiros",
+      "name": "8. Insights",
+      "metaSortKey": 7
+    },
+    {
+      "_id": "fld_8",
+      "_type": "request_group",
+      "parentId": "wrk_banheiros",
+      "name": "9. Perfil",
+      "metaSortKey": 8
+    },
+    {
+      "_id": "req_login_admin",
+      "_type": "request",
+      "parentId": "fld_0",
+      "name": "Login (admin)",
+      "description": "Retorna o access token (JWT). Copie o accessToken para a variavel de ambiente access_token.",
+      "method": "POST",
+      "url": "{{ _.base_url }}/oauth/token",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"admin@utfpr.edu.br\",\n  \"senha\": \"admin123\"\n}"
+      }
+    },
+    {
+      "_id": "req_login_user",
+      "_type": "request",
+      "parentId": "fld_0",
+      "name": "Login (usuário comum)",
+      "description": "",
+      "method": "POST",
+      "url": "{{ _.base_url }}/oauth/token",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"joao@alunos.utfpr.edu.br\",\n  \"senha\": \"user123\"\n}"
+      }
+    },
+    {
+      "_id": "req_refresh",
+      "_type": "request",
+      "parentId": "fld_0",
+      "name": "Renovar access token (refresh cookie)",
+      "description": "Usa o cookie HttpOnly refreshToken gravado no login.",
+      "method": "POST",
+      "url": "{{ _.base_url }}/oauth/token/refresh",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_logout",
+      "_type": "request",
+      "parentId": "fld_0",
+      "name": "Logout",
+      "description": "Remove o cookie do refresh token.",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/oauth/token",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_usuario_criar",
+      "_type": "request",
+      "parentId": "fld_1",
+      "name": "Cadastrar usuário (público)",
+      "description": "Cadastro publico. A role e sempre USER (nao permite escalonamento).",
+      "method": "POST",
+      "url": "{{ _.base_url }}/usuarios",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Novo Aluno\",\n  \"email\": \"novo@alunos.utfpr.edu.br\",\n  \"senha\": \"novo123\"\n}"
+      }
+    },
+    {
+      "_id": "req_usuario_listar",
+      "_type": "request",
+      "parentId": "fld_1",
+      "name": "Listar usuários (ADMIN)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/usuarios",
+      "headers": [],
+      "parameters": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_usuario_buscar",
+      "_type": "request",
+      "parentId": "fld_1",
+      "name": "Buscar usuário por id (ADMIN)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/usuarios/2",
+      "headers": [],
+      "parameters": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_usuario_atualizar",
+      "_type": "request",
+      "parentId": "fld_1",
+      "name": "Atualizar usuário (ADMIN)",
+      "description": "",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/usuarios/2",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Joao Aluno\",\n  \"email\": \"joao@alunos.utfpr.edu.br\",\n  \"senha\": \"user123\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_usuario_ativo",
+      "_type": "request",
+      "parentId": "fld_1",
+      "name": "Ativar/desativar usuário (ADMIN)",
+      "description": "",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/usuarios/3/ativo",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "true"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_usuario_remover",
+      "_type": "request",
+      "parentId": "fld_1",
+      "name": "Remover usuário (ADMIN)",
+      "description": "",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/usuarios/4",
+      "headers": [],
+      "parameters": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_campus_listar",
+      "_type": "request",
+      "parentId": "fld_2",
+      "name": "Listar câmpus (público)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/campus",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_campus_buscar",
+      "_type": "request",
+      "parentId": "fld_2",
+      "name": "Buscar câmpus por id (público)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/campus/1",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_campus_criar",
+      "_type": "request",
+      "parentId": "fld_2",
+      "name": "Cadastrar câmpus (ADMIN)",
+      "description": "",
+      "method": "POST",
+      "url": "{{ _.base_url }}/campus",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"UTFPR Medianeira\",\n  \"cidade\": \"Medianeira\",\n  \"estado\": \"PR\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_campus_atualizar",
+      "_type": "request",
+      "parentId": "fld_2",
+      "name": "Atualizar câmpus (ADMIN)",
+      "description": "",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/campus/2",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"UTFPR Toledo\",\n  \"cidade\": \"Toledo\",\n  \"estado\": \"PR\",\n  \"ativo\": true\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_campus_remover",
+      "_type": "request",
+      "parentId": "fld_2",
+      "name": "Remover câmpus (ADMIN)",
+      "description": "",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/campus/3",
+      "headers": [],
+      "parameters": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_loc_listar",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "Listar localizações (público)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/localizacoes",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_loc_filtro",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "Listar localizações por câmpus (público)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/localizacoes?campusId=1",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_loc_criar",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "Cadastrar localização (ADMIN)",
+      "description": "",
+      "method": "POST",
+      "url": "{{ _.base_url }}/localizacoes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"campus\": {\n    \"id\": 1\n  },\n  \"tipo\": \"GINASIO\",\n  \"nome\": \"Ginásio de esportes\",\n  \"descricao\": \"Ao lado da quadra\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_loc_atualizar",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "Atualizar localização (ADMIN)",
+      "description": "",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/localizacoes/4",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"campus\": {\n    \"id\": 1\n  },\n  \"tipo\": \"AREA_EXTERNA\",\n  \"nome\": \"Quadra de esportes\",\n  \"descricao\": \"Area externa ao lado da quadra\",\n  \"ativo\": true\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_loc_remover",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "Remover localização (ADMIN)",
+      "description": "",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/localizacoes/5",
+      "headers": [],
+      "parameters": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_ban_listar",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "Listar banheiros (público)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/banheiros",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_ban_filtros",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "Listar com filtros (câmpus/tipo/acessível)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/banheiros?campusId=1&tipo=PCD&acessivel=true",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_ban_buscar",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "Buscar banheiro por id (público)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/banheiros/1",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_ban_ranking",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "Ranking dos banheiros (público)",
+      "description": "Ordenado pela nota media. Inclui o selo (TRONO_DE_OURO / ZONA_DE_RISCO).",
+      "method": "GET",
+      "url": "{{ _.base_url }}/banheiros/ranking",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_ban_criar",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "Cadastrar banheiro (ADMIN)",
+      "description": "",
+      "method": "POST",
+      "url": "{{ _.base_url }}/banheiros",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"localizacao\": {\n    \"id\": 1\n  },\n  \"identificador\": \"Bloco A - 1º andar - Feminino\",\n  \"andar\": 1,\n  \"tipo\": \"F\",\n  \"descricao\": \"Em frente à sala A101\",\n  \"qtdCabines\": 3,\n  \"acessivel\": false\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_ban_atualizar",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "Atualizar banheiro (ADMIN)",
+      "description": "",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/banheiros/1",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"localizacao\": {\n    \"id\": 1\n  },\n  \"identificador\": \"Bloco A - Térreo - Masculino\",\n  \"andar\": 0,\n  \"tipo\": \"M\",\n  \"descricao\": \"Ao lado da cantina\",\n  \"qtdCabines\": 3,\n  \"acessivel\": false,\n  \"ativo\": true\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_ban_ativo",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "Ativar/desativar banheiro (ADMIN)",
+      "description": "",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/banheiros/6/ativo",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "true"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_ban_remover",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "Remover banheiro (ADMIN)",
+      "description": "",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/banheiros/7",
+      "headers": [],
+      "parameters": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_av_pesquisar",
+      "_type": "request",
+      "parentId": "fld_5",
+      "name": "Pesquisar avaliações com filtros e paginação (público)",
+      "description": "Filtros: banheiroId, campusId, dataDe, dataAte. Paginacao: page, size, sort.",
+      "method": "GET",
+      "url": "{{ _.base_url }}/avaliacoes?banheiroId=1&page=0&size=5&sort=dataAvaliacao,desc",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_av_buscar",
+      "_type": "request",
+      "parentId": "fld_5",
+      "name": "Buscar avaliação por id (público)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/avaliacoes/1",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_av_criar",
+      "_type": "request",
+      "parentId": "fld_5",
+      "name": "Criar avaliação (autenticado)",
+      "description": "O usuario vem do token JWT. Regra: 1 avaliacao por usuario/banheiro/dia (2ª tentativa retorna 422).",
+      "method": "POST",
+      "url": "{{ _.base_url }}/avaliacoes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"banheiro\": {\n    \"id\": 1\n  },\n  \"limpeza\": 4,\n  \"cheiro\": 4,\n  \"papelHigienico\": 5,\n  \"estadoPortas\": 4,\n  \"iluminacao\": 5,\n  \"silencio\": 3,\n  \"movimentacao\": 3,\n  \"comentario\": \"Avaliação de teste\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_av_inativo",
+      "_type": "request",
+      "parentId": "fld_5",
+      "name": "Criar avaliação em banheiro inativo (espera 422)",
+      "description": "",
+      "method": "POST",
+      "url": "{{ _.base_url }}/avaliacoes",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"banheiro\": {\n    \"id\": 6\n  },\n  \"limpeza\": 4,\n  \"cheiro\": 4,\n  \"papelHigienico\": 5,\n  \"estadoPortas\": 4,\n  \"iluminacao\": 5,\n  \"silencio\": 3,\n  \"movimentacao\": 3\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_av_remover",
+      "_type": "request",
+      "parentId": "fld_5",
+      "name": "Remover avaliação (ADMIN)",
+      "description": "",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/avaliacoes/1",
+      "headers": [],
+      "parameters": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_com_listar",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "Listar comentários de um banheiro (público)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/comentarios?banheiroId=4",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_com_criar",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "Comentar (autenticado)",
+      "description": "",
+      "method": "POST",
+      "url": "{{ _.base_url }}/comentarios",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"banheiro\": {\n    \"id\": 4\n  },\n  \"texto\": \"Dica: esse banheiro é o mais limpo do campus!\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_com_remover",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "Remover comentário (ADMIN)",
+      "description": "",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/comentarios/1",
+      "headers": [],
+      "parameters": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_ins_banheiro",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "Insights de um banheiro (público)",
+      "description": "Melhor horario, pico de movimento, tendencia e alertas/destaques.",
+      "method": "GET",
+      "url": "{{ _.base_url }}/insights/banheiros/1",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_ins_horarios",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "Análise de movimentação por horário (público)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/insights/banheiros/1/horarios",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_ins_campus",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "Panorama geral do câmpus (público)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/insights/campus/1",
+      "headers": [],
+      "parameters": []
+    },
+    {
+      "_id": "req_ins_gerar",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "Gerar insights agora (ADMIN)",
+      "description": "Tambem executado automaticamente por job agendado (cron de hora em hora).",
+      "method": "POST",
+      "url": "{{ _.base_url }}/insights/gerar",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_perfil_ver",
+      "_type": "request",
+      "parentId": "fld_8",
+      "name": "Ver meu perfil (autenticado)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/perfil",
+      "headers": [],
+      "parameters": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_perfil_atualizar",
+      "_type": "request",
+      "parentId": "fld_8",
+      "name": "Atualizar meu perfil (autenticado)",
+      "description": "",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/perfil",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"João Aluno Silva\",\n  \"avatar\": null\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    },
+    {
+      "_id": "req_perfil_avaliacoes",
+      "_type": "request",
+      "parentId": "fld_8",
+      "name": "Histórico das minhas avaliações (autenticado)",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/perfil/avaliacoes?page=0&size=10",
+      "headers": [],
+      "parameters": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}"
+      }
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+<div class="titulo-pagina">
+  <h1>Banheiros do campus</h1>
+</div>
+
+@if (panorama) {
+  <div class="card">
+    <strong>{{ panorama.campus }}</strong>
+    <div class="criterios" style="margin-top:.5rem">
+      <div class="criterio"><span class="muted">Banheiros ativos</span><strong>{{ panorama.totalBanheiros }}</strong></div>
+      <div class="criterio"><span class="muted">Avaliações</span><strong>{{ panorama.totalAvaliacoes }}</strong></div>
+      <div class="criterio"><span class="muted">Nota média geral</span><strong>{{ panorama.notaMediaGeral ?? '—' }}</strong></div>
+      @if (panorama.melhorBanheiro) {
+        <div class="criterio"><span class="muted">Melhor banheiro 🏆</span><strong>{{ panorama.melhorBanheiro.identificador }}</strong></div>
+      }
+    </div>
+  </div>
+}
+
+<div class="filtros">
+  <div>
+    <label>Câmpus</label>
+    <select [(ngModel)]="filtroCampus" (ngModelChange)="aoTrocarCampus()">
+      <option [ngValue]="null">Todos</option>
+      @for (c of listaCampus; track c.id) {
+        <option [ngValue]="c.id">{{ c.nome }}</option>
+      }
+    </select>
+  </div>
+  <div>
+    <label>Localização</label>
+    <select [(ngModel)]="filtroLocalizacao" (ngModelChange)="buscar()">
+      <option [ngValue]="null">Todas</option>
+      @for (l of localizacoes; track l.id) {
+        <option [ngValue]="l.id">{{ l.nome }}</option>
+      }
+    </select>
+  </div>
+  <div>
+    <label>Tipo</label>
+    <select [(ngModel)]="filtroTipo" (ngModelChange)="buscar()">
+      <option [ngValue]="null">Todos</option>
+      @for (t of tipos; track t) {
+        <option [ngValue]="t">{{ t }}</option>
+      }
+    </select>
+  </div>
+  <div>
+    <label>Acessibilidade</label>
+    <select [(ngModel)]="filtroAcessivel" (ngModelChange)="buscar()">
+      <option [ngValue]="null">Indiferente</option>
+      <option [ngValue]="true">Acessível</option>
+      <option [ngValue]="false">Não acessível</option>
+    </select>
+  </div>
+</div>
+
+@if (carregando) {
+  <p class="muted">Carregando banheiros...</p>
+} @else if (banheiros.length === 0) {
+  <div class="card">Nenhum banheiro encontrado com os filtros selecionados.</div>
+} @else {
+  <div class="grade">
+    @for (b of banheiros; track b.id) {
+      <a class="card card-banheiro" [routerLink]="['/banheiros', b.id]">
+        <h3>
+          {{ b.identificador }}
+          @if (b.selo === 'TRONO_DE_OURO') { <span class="selo ouro">🏆 Trono de Ouro</span> }
+          @if (b.selo === 'ZONA_DE_RISCO') { <span class="selo risco">⚠️ Zona de Risco</span> }
+        </h3>
+        <div class="local">
+          {{ nomeLocalizacao(b) }}
+          @if (b.andar != null) { · {{ b.andar }}º andar }
+        </div>
+        <span class="selo tipo">{{ b.tipo }}</span>
+        @if (b.acessivel) { <span class="selo tipo">♿ Acessível</span> }
+        <div style="margin-top:.6rem">
+          <app-star-rating [nota]="b.notaMedia" [mostrarNota]="true" />
+          <small class="muted"> ({{ b.totalAvaliacoes }} avaliações)</small>
+        </div>
+      </a>
+    }
+  </div>
+}

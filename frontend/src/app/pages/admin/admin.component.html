@@ -1,0 +1,196 @@
+<div class="titulo-pagina">
+  <h1>Administração</h1>
+  <button class="botao" (click)="gerarInsights()">💡 Gerar insights agora</button>
+</div>
+<p class="muted">Cadastro da estrutura do campus. Disponível apenas para administradores.</p>
+
+<div class="abas">
+  <button [class.ativa]="aba === 'banheiros'" (click)="trocarAba('banheiros')">Banheiros</button>
+  <button [class.ativa]="aba === 'localizacoes'" (click)="trocarAba('localizacoes')">Localizações</button>
+  <button [class.ativa]="aba === 'campus'" (click)="trocarAba('campus')">Câmpus</button>
+</div>
+
+@if (mensagem) { <div class="alerta sucesso">{{ mensagem }}</div> }
+@if (erro) { <div class="alerta erro">{{ erro }}</div> }
+
+<!-- ==================== CAMPUS ==================== -->
+@if (aba === 'campus') {
+  <div class="card">
+    <h3>Novo câmpus</h3>
+    <form (ngSubmit)="criarCampus()">
+      <div class="form-linha">
+        <div>
+          <label>Nome</label>
+          <input name="cNome" [(ngModel)]="novoCampus.nome" required placeholder="UTFPR Medianeira" />
+        </div>
+        <div>
+          <label>Cidade</label>
+          <input name="cCidade" [(ngModel)]="novoCampus.cidade" required />
+        </div>
+        <div>
+          <label>UF</label>
+          <input name="cEstado" [(ngModel)]="novoCampus.estado" required maxlength="2" />
+        </div>
+      </div>
+      <br />
+      <button class="botao" type="submit">Cadastrar câmpus</button>
+    </form>
+  </div>
+  <br />
+  <table>
+    <thead><tr><th>Nome</th><th>Cidade</th><th>UF</th><th></th></tr></thead>
+    <tbody>
+      @for (c of listaCampus; track c.id) {
+        <tr>
+          <td>{{ c.nome }}</td>
+          <td>{{ c.cidade }}</td>
+          <td>{{ c.estado }}</td>
+          <td style="text-align:right">
+            <button class="botao perigo" (click)="removerCampus(c)">Remover</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+
+<!-- ==================== LOCALIZACOES ==================== -->
+@if (aba === 'localizacoes') {
+  <div class="card">
+    <h3>Nova localização</h3>
+    <form (ngSubmit)="criarLocalizacao()">
+      <div class="form-linha">
+        <div>
+          <label>Câmpus</label>
+          <select name="lCampus" [(ngModel)]="novaLocalizacao.campusId" required>
+            <option [ngValue]="null" disabled>Selecione...</option>
+            @for (c of listaCampus; track c.id) {
+              <option [ngValue]="c.id">{{ c.nome }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label>Tipo</label>
+          <select name="lTipo" [(ngModel)]="novaLocalizacao.tipo">
+            @for (t of tiposLocalizacao; track t) {
+              <option [ngValue]="t">{{ t }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label>Nome</label>
+          <input name="lNome" [(ngModel)]="novaLocalizacao.nome" required placeholder="Bloco C" />
+        </div>
+      </div>
+      <label>Descrição (opcional)</label>
+      <input name="lDescricao" [(ngModel)]="novaLocalizacao.descricao" />
+      <br /><br />
+      <button class="botao" type="submit" [disabled]="!novaLocalizacao.campusId || !novaLocalizacao.nome">
+        Cadastrar localização
+      </button>
+    </form>
+  </div>
+  <br />
+  <table>
+    <thead><tr><th>Nome</th><th>Tipo</th><th>Câmpus</th><th></th></tr></thead>
+    <tbody>
+      @for (l of localizacoes; track l.id) {
+        <tr>
+          <td>{{ l.nome }}</td>
+          <td>{{ l.tipo }}</td>
+          <td>{{ nomeCampus(l) }}</td>
+          <td style="text-align:right">
+            <button class="botao perigo" (click)="removerLocalizacao(l)">Remover</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+
+<!-- ==================== BANHEIROS ==================== -->
+@if (aba === 'banheiros') {
+  <div class="card">
+    <h3>{{ editandoId ? 'Editar banheiro #' + editandoId : 'Novo banheiro' }}</h3>
+    <form (ngSubmit)="salvarBanheiro()">
+      <div class="form-linha">
+        <div>
+          <label>Localização</label>
+          <select name="bLocalizacao" [(ngModel)]="novoBanheiro.localizacaoId" required>
+            <option [ngValue]="null" disabled>Selecione...</option>
+            @for (l of localizacoes; track l.id) {
+              <option [ngValue]="l.id">{{ l.nome }} ({{ nomeCampus(l) }})</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label>Identificador</label>
+          <input name="bIdentificador" [(ngModel)]="novoBanheiro.identificador" required
+                 placeholder="Ex.: Ao lado do auditório" />
+        </div>
+      </div>
+      <div class="form-linha">
+        <div>
+          <label>Tipo</label>
+          <select name="bTipo" [(ngModel)]="novoBanheiro.tipo">
+            @for (t of tiposBanheiro; track t) {
+              <option [ngValue]="t">{{ t }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label>Andar (opcional)</label>
+          <input name="bAndar" type="number" [(ngModel)]="novoBanheiro.andar" />
+        </div>
+        <div>
+          <label>Qtd. cabines</label>
+          <input name="bCabines" type="number" min="1" [(ngModel)]="novoBanheiro.qtdCabines" />
+        </div>
+      </div>
+      <label>Descrição (opcional)</label>
+      <input name="bDescricao" [(ngModel)]="novoBanheiro.descricao" />
+      <label style="display:flex;align-items:center;gap:.4rem;font-weight:400">
+        <input type="checkbox" name="bAcessivel" [(ngModel)]="novoBanheiro.acessivel"
+               style="width:auto" />
+        ♿ Banheiro acessível (PCD)
+      </label>
+      <br />
+      <button class="botao" type="submit"
+              [disabled]="!novoBanheiro.localizacaoId || !novoBanheiro.identificador">
+        {{ editandoId ? 'Salvar alterações' : 'Cadastrar banheiro' }}
+      </button>
+      @if (editandoId) {
+        <button class="botao secundario" style="color:#374151" type="button" (click)="cancelarEdicao()">
+          Cancelar edição
+        </button>
+      }
+    </form>
+  </div>
+  <br />
+  <table>
+    <thead>
+      <tr><th>Identificador</th><th>Localização</th><th>Tipo</th><th>Nota</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+      @for (b of banheiros; track b.id) {
+        <tr>
+          <td>{{ b.identificador }}</td>
+          <td>{{ nomeLocalizacao(b) }}</td>
+          <td>{{ b.tipo }} @if (b.acessivel) { ♿ }</td>
+          <td>{{ (b.notaMedia ?? 0) | number: '1.1-1' }} ({{ b.totalAvaliacoes }})</td>
+          <td>
+            @if (b.ativo === false) { <span class="selo inativo">Inativo</span> }
+            @else { <span class="selo tipo">Ativo</span> }
+          </td>
+          <td style="text-align:right;white-space:nowrap">
+            <button class="botao secundario" style="color:#374151" (click)="editarBanheiro(b)">Editar</button>
+            <button class="botao secundario" style="color:#374151" (click)="alternarAtivo(b)">
+              {{ b.ativo === false ? 'Reativar' : 'Desativar' }}
+            </button>
+            <button class="botao perigo" (click)="removerBanheiro(b)">Remover</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

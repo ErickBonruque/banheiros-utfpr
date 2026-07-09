@@ -1,0 +1,157 @@
+@if (banheiro) {
+  <p><a routerLink="/">← Voltar para a lista</a></p>
+
+  <div class="card">
+    <div class="titulo-pagina">
+      <div>
+        <h1 style="margin:0">
+          {{ banheiro.identificador }}
+          @if (banheiro.selo === 'TRONO_DE_OURO') { <span class="selo ouro">🏆 Trono de Ouro</span> }
+          @if (banheiro.selo === 'ZONA_DE_RISCO') { <span class="selo risco">⚠️ Zona de Risco</span> }
+          @if (banheiro.ativo === false) { <span class="selo inativo">Inativo</span> }
+        </h1>
+        <p class="muted" style="margin:.3rem 0">
+          {{ nomeLocalizacao() }}
+          @if (banheiro.andar != null) { · {{ banheiro.andar }}º andar }
+          @if (banheiro.qtdCabines) { · {{ banheiro.qtdCabines }} cabines }
+        </p>
+        <span class="selo tipo">{{ banheiro.tipo }}</span>
+        @if (banheiro.acessivel) { <span class="selo tipo">♿ Acessível</span> }
+        @if (banheiro.descricao) { <p class="muted">{{ banheiro.descricao }}</p> }
+      </div>
+      <div style="text-align:center">
+        <div class="nota-grande">{{ (banheiro.notaMedia ?? 0) | number: '1.1-1' }}</div>
+        <app-star-rating [nota]="banheiro.notaMedia" />
+        <div class="muted">{{ banheiro.totalAvaliacoes }} avaliações</div>
+      </div>
+    </div>
+  </div>
+
+  @if (insights.length > 0) {
+    <div class="secao">
+      <h2>💡 Insights inteligentes</h2>
+      @for (i of insights; track i.id) {
+        <div class="insight {{ i.tipo }}">
+          <h4>{{ i.titulo }}</h4>
+          <p>{{ i.descricao }}</p>
+        </div>
+      }
+    </div>
+  }
+
+  @if (horarios.length > 0) {
+    <div class="secao">
+      <h2>🕐 Movimentação por horário</h2>
+      <table>
+        <thead>
+          <tr><th>Período</th><th>Horário</th><th>Avaliações</th><th>Tranquilidade média</th></tr>
+        </thead>
+        <tbody>
+          @for (h of horarios; track h.faixa) {
+            <tr>
+              <td>{{ h.faixa }}</td>
+              <td>{{ h.periodo }}</td>
+              <td>{{ h.totalAvaliacoes }}</td>
+              <td>
+                @if (h.indiceTranquilidade != null) {
+                  <app-star-rating [nota]="h.indiceTranquilidade" [mostrarNota]="true" />
+                } @else {
+                  <span class="muted">sem dados</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <div class="secao">
+    <h2>⭐ Avaliar este banheiro</h2>
+    @if (!auth.logado()) {
+      <div class="card">
+        <a routerLink="/login">Entre</a> ou <a routerLink="/registro">crie uma conta</a> para avaliar.
+      </div>
+    } @else {
+      <div class="card">
+        @if (mensagem) { <div class="alerta sucesso">{{ mensagem }}</div> }
+        @if (erro) { <div class="alerta erro">{{ erro }}</div> }
+        <div class="criterios">
+          @for (c of criterios; track c.campo) {
+            <div class="criterio">
+              <span>{{ c.rotulo }}</span>
+              <app-star-rating [nota]="novaAvaliacao[c.campo]" [editavel]="true"
+                               (notaChange)="novaAvaliacao[c.campo] = $event" />
+            </div>
+          }
+        </div>
+        <label for="comentario">Comentário (opcional)</label>
+        <textarea id="comentario" rows="2" name="comentario"
+                  [(ngModel)]="novaAvaliacao.comentario"
+                  placeholder="Conte como foi sua experiência..."></textarea>
+        <br /><br />
+        <button class="botao" (click)="enviarAvaliacao()" [disabled]="!formularioValido()">
+          Enviar avaliação
+        </button>
+        @if (!formularioValido()) {
+          <small class="muted"> Dê uma nota de 1 a 5 para todos os critérios.</small>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="secao">
+    <h2>📋 Avaliações</h2>
+    @if (!avaliacoes || avaliacoes.content.length === 0) {
+      <p class="muted">Este banheiro ainda não recebeu avaliações.</p>
+    } @else {
+      @for (a of avaliacoes.content; track a.id) {
+        <div class="card" style="margin-bottom:.6rem">
+          <div class="titulo-pagina">
+            <strong>{{ a.usuario?.nome ?? 'Usuário' }}</strong>
+            <span class="muted">{{ a.dataAvaliacao }} às {{ a.horarioAvaliacao?.slice(0, 5) }}</span>
+          </div>
+          <app-star-rating [nota]="a.notaGeral" [mostrarNota]="true" />
+          @if (a.comentario) { <p style="margin:.4rem 0 0">"{{ a.comentario }}"</p> }
+        </div>
+      }
+      @if (avaliacoes.totalPages > 1) {
+        <div class="paginacao">
+          <button class="botao secundario" style="color:#374151"
+                  [disabled]="paginaAtual === 0"
+                  (click)="carregarAvaliacoes(paginaAtual - 1)">← Anteriores</button>
+          <span class="muted">Página {{ paginaAtual + 1 }} de {{ avaliacoes.totalPages }}</span>
+          <button class="botao secundario" style="color:#374151"
+                  [disabled]="paginaAtual >= avaliacoes.totalPages - 1"
+                  (click)="carregarAvaliacoes(paginaAtual + 1)">Próximas →</button>
+        </div>
+      }
+    }
+  </div>
+
+  <div class="secao">
+    <h2>💬 Comentários</h2>
+    @if (auth.logado()) {
+      <div class="card" style="margin-bottom:.8rem">
+        <textarea rows="2" name="novoComentario" [(ngModel)]="novoComentario"
+                  placeholder="Deixe uma dica ou observação sobre este banheiro..."></textarea>
+        <br /><br />
+        <button class="botao" (click)="enviarComentario()" [disabled]="!novoComentario.trim()">Comentar</button>
+      </div>
+    }
+    @if (comentarios.length === 0) {
+      <p class="muted">Nenhum comentário ainda.</p>
+    }
+    @for (c of comentarios; track c.id) {
+      <div class="card" style="margin-bottom:.6rem">
+        <div class="titulo-pagina">
+          <strong>{{ c.usuario?.nome ?? 'Usuário' }}</strong>
+          <span class="muted">{{ c.dataCriacao | date: 'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <p style="margin:.4rem 0 0">{{ c.texto }}</p>
+      </div>
+    }
+  </div>
+} @else {
+  <p class="muted">Carregando banheiro...</p>
+}

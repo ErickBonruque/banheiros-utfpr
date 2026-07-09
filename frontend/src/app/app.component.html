@@ -1,0 +1,27 @@
+<header class="topo">
+  <div class="container topo-conteudo">
+    <a routerLink="/" class="logo">🚻 Banheiro<strong>UTFPR</strong></a>
+    <nav>
+      <a routerLink="/" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }">Banheiros</a>
+      <a routerLink="/ranking" routerLinkActive="ativo">Ranking</a>
+      @if (auth.admin()) {
+        <a routerLink="/admin" routerLinkActive="ativo">Administração</a>
+      }
+      @if (auth.logado()) {
+        <a routerLink="/perfil" routerLinkActive="ativo">{{ auth.nomeUsuario() || 'Perfil' }}</a>
+        <button class="botao secundario" (click)="sair()">Sair</button>
+      } @else {
+        <a routerLink="/login" routerLinkActive="ativo">Entrar</a>
+        <a routerLink="/registro" class="botao">Criar conta</a>
+      }
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <router-outlet />
+</main>
+
+<footer class="rodape">
+  BanheiroUTFPR — Sistema de avaliação de banheiros do campus · UTFPR Santa Helena
+</footer>

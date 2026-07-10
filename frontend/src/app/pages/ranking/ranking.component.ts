@@ -10,7 +10,7 @@ import { StarRatingComponent } from '../../shared/star-rating.component';
   standalone: true,
   imports: [CommonModule, RouterLink, StarRatingComponent],
   template: `
-    <h1>🏆 Ranking dos banheiros</h1>
+    <h1>Ranking dos banheiros</h1>
     <p class="muted">Classificação geral pela nota média das avaliações (somente banheiros ativos).</p>
 
     @if (carregando) {
@@ -32,8 +32,8 @@ import { StarRatingComponent } from '../../shared/star-rating.component';
               <td><strong>{{ i + 1 }}º</strong></td>
               <td>
                 <a [routerLink]="['/banheiros', b.id]">{{ b.identificador }}</a>
-                @if (b.selo === 'TRONO_DE_OURO') { <span class="selo ouro">🏆</span> }
-                @if (b.selo === 'ZONA_DE_RISCO') { <span class="selo risco">⚠️</span> }
+                @if (b.selo === 'TRONO_DE_OURO') { <span class="selo ouro">Trono de Ouro</span> }
+                @if (b.selo === 'ZONA_DE_RISCO') { <span class="selo risco">Zona de Risco</span> }
               </td>
               <td>{{ nomeLocalizacao(b) }}</td>
               <td><app-star-rating [nota]="b.notaMedia" [mostrarNota]="true" /></td>

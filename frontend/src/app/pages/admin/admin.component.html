@@ -1,6 +1,6 @@
 <div class="titulo-pagina">
   <h1>Administração</h1>
-  <button class="botao" (click)="gerarInsights()">💡 Gerar insights agora</button>
+  <button class="botao" (click)="gerarInsights()">Gerar insights agora</button>
 </div>
 <p class="muted">Cadastro da estrutura do campus. Disponível apenas para administradores.</p>
 
@@ -152,7 +152,7 @@
       <label style="display:flex;align-items:center;gap:.4rem;font-weight:400">
         <input type="checkbox" name="bAcessivel" [(ngModel)]="novoBanheiro.acessivel"
                style="width:auto" />
-        ♿ Banheiro acessível (PCD)
+        Banheiro acessível (PCD)
       </label>
       <br />
       <button class="botao" type="submit"
@@ -176,7 +176,7 @@
         <tr>
           <td>{{ b.identificador }}</td>
           <td>{{ nomeLocalizacao(b) }}</td>
-          <td>{{ b.tipo }} @if (b.acessivel) { ♿ }</td>
+          <td>{{ b.tipo }}@if (b.acessivel) { <span class="selo tipo" style="margin-left:.35rem">Acessível</span> }</td>
           <td>{{ (b.notaMedia ?? 0) | number: '1.1-1' }} ({{ b.totalAvaliacoes }})</td>
           <td>
             @if (b.ativo === false) { <span class="selo inativo">Inativo</span> }

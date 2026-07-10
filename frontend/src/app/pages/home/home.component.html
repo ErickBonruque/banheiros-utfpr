@@ -1,18 +1,31 @@
 <div class="titulo-pagina">
-  <h1>Banheiros do campus</h1>
+  <h1>Banheiros do câmpus</h1>
 </div>
 
 @if (panorama) {
-  <div class="card">
-    <strong>{{ panorama.campus }}</strong>
-    <div class="criterios" style="margin-top:.5rem">
-      <div class="criterio"><span class="muted">Banheiros ativos</span><strong>{{ panorama.totalBanheiros }}</strong></div>
-      <div class="criterio"><span class="muted">Avaliações</span><strong>{{ panorama.totalAvaliacoes }}</strong></div>
-      <div class="criterio"><span class="muted">Nota média geral</span><strong>{{ panorama.notaMediaGeral ?? '—' }}</strong></div>
-      @if (panorama.melhorBanheiro) {
-        <div class="criterio"><span class="muted">Melhor banheiro 🏆</span><strong>{{ panorama.melhorBanheiro.identificador }}</strong></div>
-      }
+  <div class="card panorama">
+    <div>
+      <span class="rotulo">Câmpus</span>
+      <span class="valor">{{ panorama.campus }}</span>
     </div>
+    <div>
+      <span class="rotulo">Banheiros ativos</span>
+      <span class="valor">{{ panorama.totalBanheiros }}</span>
+    </div>
+    <div>
+      <span class="rotulo">Avaliações</span>
+      <span class="valor">{{ panorama.totalAvaliacoes }}</span>
+    </div>
+    <div>
+      <span class="rotulo">Nota média geral</span>
+      <span class="valor">{{ panorama.notaMediaGeral ?? '—' }}</span>
+    </div>
+    @if (panorama.melhorBanheiro) {
+      <div>
+        <span class="rotulo">Melhor avaliado</span>
+        <span class="valor" style="font-size:.95rem">{{ panorama.melhorBanheiro.identificador }}</span>
+      </div>
+    }
   </div>
 }
 
@@ -64,16 +77,16 @@
       <a class="card card-banheiro" [routerLink]="['/banheiros', b.id]">
         <h3>
           {{ b.identificador }}
-          @if (b.selo === 'TRONO_DE_OURO') { <span class="selo ouro">🏆 Trono de Ouro</span> }
-          @if (b.selo === 'ZONA_DE_RISCO') { <span class="selo risco">⚠️ Zona de Risco</span> }
+          @if (b.selo === 'TRONO_DE_OURO') { <span class="selo ouro">Trono de Ouro</span> }
+          @if (b.selo === 'ZONA_DE_RISCO') { <span class="selo risco">Zona de Risco</span> }
         </h3>
         <div class="local">
           {{ nomeLocalizacao(b) }}
           @if (b.andar != null) { · {{ b.andar }}º andar }
         </div>
         <span class="selo tipo">{{ b.tipo }}</span>
-        @if (b.acessivel) { <span class="selo tipo">♿ Acessível</span> }
-        <div style="margin-top:.6rem">
+        @if (b.acessivel) { <span class="selo tipo">Acessível</span> }
+        <div style="margin-top:.7rem">
           <app-star-rating [nota]="b.notaMedia" [mostrarNota]="true" />
           <small class="muted"> ({{ b.totalAvaliacoes }} avaliações)</small>
         </div>

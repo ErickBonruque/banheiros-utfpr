@@ -6,8 +6,8 @@
       <div>
         <h1 style="margin:0">
           {{ banheiro.identificador }}
-          @if (banheiro.selo === 'TRONO_DE_OURO') { <span class="selo ouro">🏆 Trono de Ouro</span> }
-          @if (banheiro.selo === 'ZONA_DE_RISCO') { <span class="selo risco">⚠️ Zona de Risco</span> }
+          @if (banheiro.selo === 'TRONO_DE_OURO') { <span class="selo ouro">Trono de Ouro</span> }
+          @if (banheiro.selo === 'ZONA_DE_RISCO') { <span class="selo risco">Zona de Risco</span> }
           @if (banheiro.ativo === false) { <span class="selo inativo">Inativo</span> }
         </h1>
         <p class="muted" style="margin:.3rem 0">
@@ -16,7 +16,7 @@
           @if (banheiro.qtdCabines) { · {{ banheiro.qtdCabines }} cabines }
         </p>
         <span class="selo tipo">{{ banheiro.tipo }}</span>
-        @if (banheiro.acessivel) { <span class="selo tipo">♿ Acessível</span> }
+        @if (banheiro.acessivel) { <span class="selo tipo">Acessível</span> }
         @if (banheiro.descricao) { <p class="muted">{{ banheiro.descricao }}</p> }
       </div>
       <div style="text-align:center">
@@ -29,7 +29,7 @@
 
   @if (insights.length > 0) {
     <div class="secao">
-      <h2>💡 Insights inteligentes</h2>
+      <h2>Insights</h2>
       @for (i of insights; track i.id) {
         <div class="insight {{ i.tipo }}">
           <h4>{{ i.titulo }}</h4>
@@ -41,7 +41,7 @@
 
   @if (horarios.length > 0) {
     <div class="secao">
-      <h2>🕐 Movimentação por horário</h2>
+      <h2>Movimentação por horário</h2>
       <table>
         <thead>
           <tr><th>Período</th><th>Horário</th><th>Avaliações</th><th>Tranquilidade média</th></tr>
@@ -67,7 +67,7 @@
   }
 
   <div class="secao">
-    <h2>⭐ Avaliar este banheiro</h2>
+    <h2>Avaliar este banheiro</h2>
     @if (!auth.logado()) {
       <div class="card">
         <a routerLink="/login">Entre</a> ou <a routerLink="/registro">crie uma conta</a> para avaliar.
@@ -101,7 +101,7 @@
   </div>
 
   <div class="secao">
-    <h2>📋 Avaliações</h2>
+    <h2>Avaliações</h2>
     @if (!avaliacoes || avaliacoes.content.length === 0) {
       <p class="muted">Este banheiro ainda não recebeu avaliações.</p>
     } @else {
@@ -130,7 +130,7 @@
   </div>
 
   <div class="secao">
-    <h2>💬 Comentários</h2>
+    <h2>Comentários</h2>
     @if (auth.logado()) {
       <div class="card" style="margin-bottom:.8rem">
         <textarea rows="2" name="novoComentario" [(ngModel)]="novoComentario"

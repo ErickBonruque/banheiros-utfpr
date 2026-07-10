@@ -135,5 +135,4 @@ Após o *Login (admin)*, copie o `accessToken` da resposta para a variável de a
 
 - [`docs/BanheiroUTFPR_Descritivo.md`](docs/BanheiroUTFPR_Descritivo.md) — descritivo do projeto (entidades, regras, rotas)
 - [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md) — arquitetura das aplicações e do banco
-- [`docs/ROTEIRO_VIDEOS.md`](docs/ROTEIRO_VIDEOS.md) — roteiro sugerido para os vídeos de apresentação
 - [`docs/CHECKPOINTS.md`](docs/CHECKPOINTS.md) — histórico dos checkpoints da disciplina

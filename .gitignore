@@ -20,3 +20,6 @@ Thumbs.db
 # Logs e ambiente
 *.log
 .env
+
+# Roteiro pessoal dos vídeos (não versionar)
+docs/ROTEIRO_VIDEOS.md

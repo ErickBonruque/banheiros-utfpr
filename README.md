@@ -5,11 +5,6 @@ Projeto final da disciplina de Análise e Desenvolvimento de Software — UTFPR 
 
 **Aluno:** Erick Bonruque · **RA:** 2587246 · **Ano:** 2026
 
-## Vídeo de apresentação
-
-- ▶️ [Assistir no Google Drive](https://drive.google.com/file/d/1f5xFimpQzkTvBb34f1lpve1nj9TeKxdv/view?usp=sharing)
-- Também disponível no repositório: [`docs/sistema-banheiros.mp4`](docs/sistema-banheiros.mp4)
-
 ## Descrição do sistema
 
 O BanheiroUTFPR permite que alunos avaliem e consultem a qualidade dos banheiros dos câmpus da UTFPR.
@@ -142,3 +137,8 @@ Após o *Login (admin)*, copie o `accessToken` da resposta para a variável de a
 - [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md) — arquitetura das aplicações e do banco
 - [`docs/CHECKPOINTS.md`](docs/CHECKPOINTS.md) — histórico dos checkpoints da disciplina
 - [`docs/sistema-banheiros.mp4`](docs/sistema-banheiros.mp4) — vídeo de apresentação do sistema ([ver no Google Drive](https://drive.google.com/file/d/1f5xFimpQzkTvBb34f1lpve1nj9TeKxdv/view?usp=sharing))
+
+## Vídeo de apresentação
+
+- ▶️ [Assistir no Google Drive](https://drive.google.com/file/d/1f5xFimpQzkTvBb34f1lpve1nj9TeKxdv/view?usp=sharing)
+- Também disponível no repositório: [`docs/sistema-banheiros.mp4`](docs/sistema-banheiros.mp4)

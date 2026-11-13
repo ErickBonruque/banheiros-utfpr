@@ -3,7 +3,7 @@
 Sistema inteligente e colaborativo de **avaliação de banheiros do campus** da UTFPR.
 Projeto final da disciplina de Análise e Desenvolvimento de Software — UTFPR Câmpus Santa Helena.
 
-**Aluno:** Erick Bonruque · **RA:** 2587246 · **Ano:** 2026
+**Aluno:** Erick Bonruque · **Ano:** 2026
 
 ## Descrição do sistema
 

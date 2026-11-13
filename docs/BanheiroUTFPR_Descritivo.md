@@ -6,7 +6,6 @@ Tecnologia em Desenvolvimento de Sistemas
 **Sistema Inteligente de Avaliação de Banheiros do Campus**
 
 - **Aluno:** Erick Bonruque
-- **RA:** 2587246
 - **Ano:** 2026
 
 ---
